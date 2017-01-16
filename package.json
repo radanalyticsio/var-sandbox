@@ -15,6 +15,6 @@
   "scripts": {
     "build": "scripts/build.sh",
     "clean": "scripts/clean.sh",
-    "start": "FLASK_APP=app.py flask run"
+    "start": "scripts/run.sh"
   }
 }

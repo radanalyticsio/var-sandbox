@@ -1,3 +1,3 @@
 #!/bin/sh
 rm -rf build
-rm -rf static
+rm -rf dist
