@@ -5,7 +5,8 @@
   "license": "Apache-2",
   "dependencies": {
     "react": "^15.4.2",
-    "react-dom": "^15.4.2"
+    "react-dom": "^15.4.2",
+    "superagent": "^3.3.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
