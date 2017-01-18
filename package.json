@@ -16,6 +16,7 @@
   "scripts": {
     "build": "scripts/build.sh",
     "clean": "scripts/clean.sh",
-    "start": "scripts/run.sh"
+    "start": "scripts/run.sh",
+    "devel": "scripts/devel.sh"
   }
 }
