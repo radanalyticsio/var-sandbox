@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Request = require('superagent');
 
+
 class StocksList extends React.Component {
   render() {
     return (
@@ -13,6 +14,7 @@ class StocksList extends React.Component {
     );
   }
 }
+
 
 class PredictionResults extends React.Component {
   render() {
@@ -35,6 +37,7 @@ class PredictionResults extends React.Component {
   }
 }
 
+
 class VaRErrors extends React.Component {
   render() {
     return (
@@ -48,6 +51,7 @@ class VaRErrors extends React.Component {
     );
   }
 }
+
 
 class VaRApp extends React.Component {
   constructor(props) {
@@ -102,15 +106,18 @@ class VaRApp extends React.Component {
   }
 
   handleQuantityChange(e) {
-    this.setState({currentQuantity: e.target.value});
+    var newval = Number.isNaN(Number(e.target.value)) ? 0 : Number(e.target.value);
+    this.setState({currentQuantity: newval});
   }
 
   handleDaysChange(e) {
-    this.setState({days: e.target.value});
+    var newval = Number.isNaN(Number(e.target.value)) ? 0 : Number(e.target.value);
+    this.setState({days: newval});
   }
 
   handleSimsChange(e) {
-    this.setState({simulations: e.target.value});
+    var newval = Number.isNaN(Number(e.target.value)) ? 0 : Number(e.target.value);
+    this.setState({simulations: newval});
   }
 
   handleAddSymbol(e) {
@@ -189,6 +196,7 @@ class VaRApp extends React.Component {
       });
   }
 }
+
 
 ReactDOM.render(
   <VaRApp />,
