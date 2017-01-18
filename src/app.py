@@ -8,9 +8,9 @@ from flask import views
 app = flask.Flask(__name__)
 
 
-@app.route('/')
-def index():
-    return flask.render_template('index.html')
+class HTMLContent(views.MethodView):
+    def get(self):
+        return flask.render_template('index.html')
 
 
 class PredictionAPI(views.MethodView):
@@ -22,8 +22,11 @@ class PredictionAPI(views.MethodView):
         return json.jsonify(data)
 
 
-app.add_url_rule('/predictions', view_func=PredictionAPI.as_view('predictions'))
+def main():
+    app.add_url_rule('/', view_func=HTMLContent.as_view('html'))
+    app.add_url_rule('/predictions', view_func=PredictionAPI.as_view('predictions'))
+    app.run(host='0.0.0.0', port=8080, debug=True)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    main()
