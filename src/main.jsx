@@ -31,7 +31,11 @@ class PredictionResults extends React.Component {
                 <li key={stock.symbol}>{stock.symbol} {stock.quantity} shares</li>
               ))}
               {result.prediction !== undefined &&
-                <li>results: {result.prediction}</li>
+                <li>results:
+                  <ul>
+                    {result.prediction.map(pred => (<li key={pred}>{pred}</li>))}
+                  </ul>
+                </li>
               }
             </ul>
           </li>

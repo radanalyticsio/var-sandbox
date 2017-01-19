@@ -46,8 +46,13 @@ $ yarn run build
 
 **Run the application with Yarn**
 
+Before executing the devel run option, you need to provide 2 environment
+variables, `SPARK_SUBMIT_CMD` and `WIKIEOD_FILE`.
+
 ```
-$ yarn run start
+$ export SPARK_SUBMIT_CMD=$HOME/opt/spark/bin/spark-submit
+$ export WIKIEOD_FILE=$HOME/tmp/wikieod.parquet
+$ yarn run devel
 ```
 
 As before, visit `http://127.0.0.1:8080/` with your browser.

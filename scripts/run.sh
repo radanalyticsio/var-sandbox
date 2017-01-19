@@ -8,10 +8,11 @@ export NSS_WRAPPER_GROUP=/etc/group
 
 export LD_PRELOAD=libnss_wrapper.so
 
-SPARK_MASTER=${VAR_SPARK_MASTER:-local[*]}
+export SPARK_MASTER=${VAR_SPARK_MASTER:-local[*]}
+export WIKIEOD_FILE=/data/wikieod.parquet
 
 pushd dist
 export LC_ALL=en_US.utf8
 export LANG=en_US.utf8
-exec spark-submit --master $SPARK_MASTER ./app.py
+exec spark-submit ./app.py
 popd
