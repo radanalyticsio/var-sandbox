@@ -30,6 +30,9 @@ class PredictionResults extends React.Component {
               {result.stocks.map(stock => (
                 <li key={stock.symbol}>{stock.symbol} {stock.quantity} shares</li>
               ))}
+              {result.prediction !== undefined &&
+                <li>results: {result.prediction}</li>
+              }
             </ul>
           </li>
         ))}
@@ -64,6 +67,7 @@ class VaRApp extends React.Component {
     this.handleDaysChange = this.handleDaysChange.bind(this);
     this.handleSimsChange = this.handleSimsChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handlePredictionUpdate = this.handlePredictionUpdate.bind(this);
     this.state = {
       stocks: [],
       days: 0,
@@ -77,7 +81,7 @@ class VaRApp extends React.Component {
     console.log(wsuri);
     var socket = Io(wsuri);
     socket.on('connect', () => { console.log("websocket connected"); });
-    socket.on('update', (data) => { console.log(data); });
+    socket.on('update', this.handlePredictionUpdate);
   }
 
   render() {
@@ -105,6 +109,14 @@ class VaRApp extends React.Component {
         </div>
         </div>
     );
+  }
+
+  handlePredictionUpdate(d) {
+    var data = JSON.parse(d);
+    var updates = this.state.predictions.map((item) => {
+      return item.id === data.id ? data : item;
+    });
+    this.setState({predictions: updates});
   }
 
   handleSymbolChange(e) {

@@ -40,7 +40,9 @@ def processing_loop(spark_master, input_queue, output_queue):
     while True:
         req = input_queue.get()
         time.sleep(2)
-        req.update({'status': 'ready'})
+        req.update({
+            'status': 'ready',
+            'prediction': (100.123, 200.1)})
         output_queue.put(req)
 
 
