@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var Request = require('superagent');
+var Io = require('socket.io-client');
 
 
 class StocksList extends React.Component {
@@ -72,6 +73,11 @@ class VaRApp extends React.Component {
       errors: [],
       predictions: []
     };
+    var wsuri = "ws://" + window.location.host;
+    console.log(wsuri);
+    var socket = Io(wsuri);
+    socket.on('connect', () => { console.log("websocket connected"); });
+    socket.on('update', (data) => { console.log(data); });
   }
 
   render() {
