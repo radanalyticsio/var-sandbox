@@ -1,0 +1,98 @@
+kind: List
+apiVersion: v1
+metadata: {}
+
+items:
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: var-sandbox
+  spec: {}
+
+- kind: BuildConfig
+  apiVersion: v1
+  metadata:
+    name: var-sandbox
+  spec:
+    source:
+      type: Git
+      git:
+        uri: https://github.com/elmiko/var-sandbox
+        ref: master
+    strategy:
+      type: Docker
+    output:
+      to:
+        kind: ImageStreamTag
+        name: var-sandbox:latest
+
+- kind: Template
+  apiVersion: v1
+  template: var-sandbox
+  metadata:
+    name: var-sandbox
+  objects:
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: var-sandbox
+    spec:
+      ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+      selector:
+        name: var-sandbox
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: var-sandbox
+    spec:
+      host: ${WEB_ROUTE_HOSTNAME}
+      to:
+        kind: Service
+        name: var-sandbox
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: var-sandbox
+    spec:
+      strategy:
+        type: Rolling
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - var-sandbox
+            from:
+              kind: ImageStreamTag
+              name: var-sandbox:latest
+      replicas: 1
+      selector:
+        name: var-sandbox
+      template:
+        metadata:
+          labels:
+            name: var-sandbox
+        spec:
+          containers:
+            - name: var-sandbox
+              image: var-sandbox:latest
+              env:
+                - name: VAR_SPARK_MASTER
+                  value: ${SPARK}
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+
+  parameters:
+    - name: SPARK
+      description: connection string for the spark master
+    - name: WEB_ROUTE_HOSTNAME
+      description: The hostname used to create an external route to the webui
+
