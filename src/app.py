@@ -8,9 +8,6 @@ import flask
 from flask import json
 from flask import views
 import flask_socketio as io
-import pyspark
-from pyspark import sql as pysql
-from pyspark.sql import functions as pyfuncs
 
 
 class HTMLContent(views.MethodView):
@@ -58,6 +55,12 @@ def simulate(seed, pf, params, days):
 
 
 def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
+    # import these here to allow the debug mode to function properly in the
+    # absence of spark
+    import pyspark
+    from pyspark import sql as pysql
+    from pyspark.sql import functions as pyfuncs
+
     sconf = pyspark.SparkConf()
     sconf.setAppName('var-sandbox').setMaster(spark_master)
     sc = pyspark.SparkContext(conf=sconf)
@@ -109,22 +112,29 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
 
 
 def responder_loop(socketio, output_queue):
-    while True:
+    dont_stop = True
+    while dont_stop:
         res = output_queue.get()
-        socketio.emit('update', json.dumps(res))
+        if res == 'STOP':
+            dont_stop = False
+        else:
+            socketio.emit('update', json.dumps(res))
 
 
 def main():
     spark_master = os.environ.get('SPARK_MASTER', 'local[*]')
     wikieod_file = os.environ.get('WIKIEOD_FILE')
+    debug_mode = os.environ.get('VAR_DEBUG', False)
+
     input_queue = mp.Queue()
     output_queue = mp.Queue()
 
-    process = mp.Process(target=processing_loop,
-        args=(spark_master, input_queue, output_queue, wikieod_file))
-    process.start()
+    if not debug_mode:
+        process = mp.Process(target=processing_loop,
+            args=(spark_master, input_queue, output_queue, wikieod_file))
+        process.start()
 
-    output_queue.get()
+        output_queue.get()
 
     app = flask.Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
@@ -137,7 +147,11 @@ def main():
     thread = threading.Thread(
         target=responder_loop, args=(socketio, output_queue))
     thread.start()
-    socketio.run(app, host='0.0.0.0', port=8080)
+    try:
+        print('server running on 0.0.0.0:8080, press Ctrl-C to stop')
+        socketio.run(app, host='0.0.0.0', port=8080)
+    except KeyboardInterrupt:
+        output_queue.put('STOP')
 
 
 if __name__ == '__main__':
