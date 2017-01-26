@@ -1,6 +1,6 @@
 #!/bin/sh
-# create the output directory
-mkdir -p dist/static/js &> /dev/null
+# create the output directories
+mkdir -p dist/static/js dist/static/img &> /dev/null
 
 # build the react components and compile the javascript bundle, including
 # patternfly, bootstrap and jquery
@@ -11,6 +11,7 @@ mkdir -p dist/static/js &> /dev/null
 cp src/app.py dist/
 cp -r src/css dist/static/
 cp -r src/templates dist/
+cp assets/brand-var.svg dist/static/img/
 
 # add the patternfly css, fonts and related javascript
 cp node_modules/patternfly/dist/css/*min* dist/static/css/
