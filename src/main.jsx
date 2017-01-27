@@ -14,8 +14,8 @@ class DaysInput extends React.Component {
     const value = this.props.value;
     return (
       <div className="form-group">
-        <label className="col-sm-2 control-label" htmlFor="days-input">Days</label>
-        <div className="col-sm-10">
+        <label className="col-sm-3 control-label" htmlFor="days-input">Days</label>
+        <div className="col-sm-9">
           <input id="days-input" type="text" onChange={this.handleChange} value={value} />
         </div>
       </div>
@@ -39,8 +39,8 @@ class SimulationsInput extends React.Component {
     const value = this.props.value;
     return (
       <div className="form-group">
-        <label className="col-sm-2 control-label" htmlFor="sims-input">Simulations</label>
-        <div className="col-sm-10">
+        <label className="col-sm-3 control-label" htmlFor="sims-input">Simulations</label>
+        <div className="col-sm-9">
           <input id="sims-input" type="text" onChange={this.handleChange} value={value} />
         </div>
       </div>
@@ -70,19 +70,19 @@ class StockSymbolInput extends React.Component {
     return (
       <div>
         <div className="form-group">
-          <label className="col-sm-2 control-label" htmlFor="stock-symbol">Symbol</label>
-          <div className="col-sm-10">
+          <label className="col-sm-3 control-label" htmlFor="stock-symbol">Symbol</label>
+          <div className="col-sm-9">
             <input id="stock-symbol" type="text" onChange={this.handleSymbolChange} value={this.state.symbol} />
           </div>
         </div>
         <div className="form-group">
-          <label className="col-sm-2 control-label" htmlFor="stock-quantity">Quantity</label>
-          <div className="col-sm-10">
+          <label className="col-sm-3 control-label" htmlFor="stock-quantity">Quantity</label>
+          <div className="col-sm-9">
             <input id="stock-quantity" type="text" onChange={this.handleQuantityChange} value={this.state.quantity} />
           </div>
         </div>
         <div className="form-group">
-          <div className="col-sm-offset-2 col-sm-10">
+          <div className="col-sm-offset-3 col-sm-9">
             <button type="button" className="btn btn-primary" onClick={this.handleAdd}>Add</button><br />
           </div>
         </div>
@@ -213,10 +213,12 @@ class VaRApp extends React.Component {
               </div>
             </div>
             <div className="row">
-              <div className="col-sm-offset-1 col-sm-11">
+              <div className="col-sm-5">
                 <div className="form-group">
-                  <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>Submit</button>
-                  <button type="button" className="btn btn-default" onClick={this.handleReset}>Reset</button>
+                  <div className="col-sm-offset-3 col-sm-9">
+                    <button type="button" className="btn btn-primary" onClick={this.handleSubmit}>Submit</button>
+                    <button type="button" className="btn btn-default" onClick={this.handleReset}>Reset</button>
+                  </div>
                 </div>
               </div>
             </div>
