@@ -95,7 +95,8 @@ class StockSymbolInput extends React.Component {
   }
 
   handleQuantityChange(e) {
-    this.setState({quantity: e.target.value});
+    var newval = Number.isNaN(Number(e.target.value)) ? 0 : Number(e.target.value);
+    this.setState({quantity: newval});
   }
 
   handleAdd() {
@@ -125,27 +126,43 @@ class StocksList extends React.Component {
 class PredictionResults extends React.Component {
   render() {
     return (
-      <ul>
+      <div id="predictions">
         {this.props.results.map(result => (
-          <li key={result.id}>
-            <ul>
-              <li>status: {result.status}</li>
-              <li>days of simulation: {result.days}</li>
-              <li>number of simulations: {result.simulations}</li>
+        <div key={result.id} className="prediction_row">
+          <div className="row">
+            <div className="col-sm-2">
+              <strong>Status:</strong> {result.status}
+            </div>
+            <div className="col-sm-2">
+              <strong>Days:</strong> {result.days}
+            </div>
+            <div className="col-sm-2">
+              <strong>Simulations:</strong> {result.simulations}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <h4>Stocks</h4>
+              <ul>
               {result.stocks.map(stock => (
                 <li key={stock.symbol}>{stock.symbol} {stock.quantity} shares</li>
               ))}
+              </ul>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-sm-12">
+              <h4>Predictions</h4>
               {result.prediction !== undefined &&
-                <li>results:
-                  <ul>
-                    {result.prediction.map(pred => (<li key={pred}>{pred}</li>))}
-                  </ul>
-                </li>
+                <ul>
+                  {result.prediction.map(pred => (<li key={pred}>{pred}</li>))}
+                </ul>
               }
-            </ul>
-          </li>
+            </div>
+          </div>
+        </div>
         ))}
-      </ul>
+      </div>
     );
   }
 }
@@ -225,7 +242,7 @@ class VaRApp extends React.Component {
           </form>
         </div>
         <div className="row">
-          <h1>Results</h1>
+          <h1>Prediction Results</h1>
           <PredictionResults results={this.state.predictions} />
         </div>
       </div>

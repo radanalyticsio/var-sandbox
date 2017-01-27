@@ -1,3 +1,17 @@
 div#errors {
     padding-top: 1em;
 }
+
+div.prediction_row {
+    border-bottom: 1px #cccccc solid;
+    padding-top: 1em;
+    padding-left: 1em;
+}
+
+div.prediction_row:hover {
+    background: #cccccc;
+}
+
+div#predictions {
+    border-top: 1px #555555 solid;
+}
