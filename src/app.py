@@ -111,6 +111,17 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
         output_queue.put(req)
 
 
+def debug_processing_loop(input_queue, output_queue):
+    import time
+    output_queue.put('ready')
+    while True:
+        req = input_queue.get()
+        print('received -- {}'.format(req))
+        time.sleep(2)
+        req.update({'status': 'ready'})
+        output_queue.put(req)
+
+
 def responder_loop(socketio, output_queue):
     dont_stop = True
     while dont_stop:
@@ -129,12 +140,15 @@ def main():
     input_queue = mp.Queue()
     output_queue = mp.Queue()
 
-    if not debug_mode:
+    if debug_mode:
+        process = mp.Process(target=debug_processing_loop,
+            args=(input_queue, output_queue))
+    else:
         process = mp.Process(target=processing_loop,
             args=(spark_master, input_queue, output_queue, wikieod_file))
-        process.start()
 
-        output_queue.get()
+    process.start()
+    output_queue.get()
 
     app = flask.Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
