@@ -155,11 +155,12 @@ class VaRErrors extends React.Component {
   render() {
     return (
       <div id="errors">
-        <ul>
         {this.props.errors.map(error => (
-          <li key={error}>Error: {error}</li>
+          <div className="alert alert-danger">
+            <span className="pficon pficon-error-circle-o"></span>
+            <strong>Error:</strong> {error}
+          </div>
         ))}
-        </ul>
       </div>
     );
   }
