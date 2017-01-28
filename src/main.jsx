@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Request = require('superagent');
 var Io = require('socket.io-client');
+var Victory = require('victory');
 
 
 class DaysInput extends React.Component {
@@ -154,9 +155,7 @@ class PredictionResults extends React.Component {
             <div className="col-sm-12">
               <h4>Predictions</h4>
               {result.prediction !== undefined &&
-                <ul>
-                  {result.prediction.map(pred => (<li key={pred}>{pred}</li>))}
-                </ul>
+                <Victory.VictoryLine data={result.prediction} x="result" y="idx" />
               }
             </div>
           </div>
@@ -251,6 +250,10 @@ class VaRApp extends React.Component {
 
   handlePredictionUpdate(d) {
     var data = JSON.parse(d);
+    data.prediction.forEach((item, index, array) => {
+      var newprediction = {result: item, idx: index};
+      array[index] = newprediction;
+    });
     var updates = this.state.predictions.map((item) => {
       return item.id === data.id ? data : item;
     });
