@@ -1,0 +1,67 @@
+kind: Template
+apiVersion: v1
+template: var-sandbox
+metadata:
+  name: var-sandbox
+objects:
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: ${APPNAME}
+    labels:
+      name: ${APPNAME}
+  spec:
+    ports:
+      - protocol: TCP
+        port: 8080
+        targetPort: 8080
+    selector:
+      name: ${APPNAME}
+
+- kind: Route
+  apiVersion: v1
+  metadata:
+    name: ${APPNAME}
+  spec:
+    host: ${ROUTE_HOSTNAME}
+    to:
+      kind: Service
+      name: ${APPNAME}
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: ${APPNAME}
+  spec:
+    strategy:
+      type: Rolling
+    triggers:
+      - type: ConfigChange
+    replicas: 1
+    selector:
+      name: ${APPNAME}
+    template:
+      metadata:
+        labels:
+          name: ${APPNAME}
+      spec:
+        containers:
+          - name: ${APPNAME}
+            image: docker.io/elmiko/var-sandbox
+            env:
+              - name: VAR_SPARK_MASTER
+                value: ${SPARK_MASTER}
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+
+parameters:
+  - name: APPNAME
+    description: the application name
+    value: var-sandbox
+  - name: SPARK_MASTER
+    description: connection string for the spark master
+    value: local[*]
+  - name: ROUTE_HOSTNAME
+    description: a hostname for the route

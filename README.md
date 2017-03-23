@@ -56,3 +56,12 @@ $ yarn run devel
 ```
 
 As before, visit `http://127.0.0.1:8080/` with your browser.
+
+## Deployment on OpenShift
+
+The `openshift` directory contains a few templates for deploying the
+var-sandbox into an OpenShift project. These templates are self explanatory
+and create all the necessary objects to build and/or deploy the application.
+
+Please note the image and repository locations that are encoded in the
+templates, you will want to change these URLs to align with your needs.
