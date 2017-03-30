@@ -17,7 +17,7 @@ items:
     source:
       type: Git
       git:
-        uri: https://github.com/radanalytics/var-sandbox
+        uri: https://github.com/radanalyticsio/var-sandbox
         ref: master
     strategy:
       type: Docker
