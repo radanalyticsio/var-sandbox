@@ -340,8 +340,9 @@ class VaRApp extends React.Component {
             errors: prevState.errors.concat("server error")
           }));
         } else {
+          var newprediction = [res.body]
           this.setState((prevState) => ({
-            predictions: prevState.predictions.concat(res.body)
+            predictions: newprediction.concat(prevState.predictions)
           }));
           this.handleReset()
         }
