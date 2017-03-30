@@ -154,13 +154,14 @@ class PredictionResults extends React.Component {
           <div className="row">
             <div className="col-sm-12">
               <h4>Predictions</h4>
-              <div className="col-sm-6">
               {result.prediction !== undefined &&
-                <Victory.VictoryChart theme={Victory.VictoryTheme.material}>
-                  <Victory.VictoryLine data={result.prediction} x="idx" y="result" />
-                </Victory.VictoryChart>
+                <div className="col-sm-6">
+                  <p>5% value at risk = {result.fivepercent}</p>
+                  <Victory.VictoryChart theme={Victory.VictoryTheme.material}>
+                    <Victory.VictoryLine data={result.prediction} x="idx" y="result" />
+                  </Victory.VictoryChart>
+                </div>
               }
-              </div>
             </div>
           </div>
         </div>

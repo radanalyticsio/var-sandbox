@@ -105,8 +105,11 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
         prediction = [
             simulated_values[int(len(simulated_values) * i / num_samples)]
             for i in range(num_samples)]
+        percentage_var = 0.05
+        fivepercent = '{:0.2f}'.format(simulated_values[int(len(simulated_values) * percentage_var)])
         req.update({
             'status': 'ready',
+            'fivepercent': fivepercent,
             'prediction': prediction})
         output_queue.put(req)
 
