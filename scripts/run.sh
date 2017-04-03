@@ -14,5 +14,5 @@ export WIKIEOD_FILE=/data/wikieod.parquet
 pushd dist
 export LC_ALL=en_US.utf8
 export LANG=en_US.utf8
-exec spark-submit ./app.py
+exec spark-submit --master="${SPARK_MASTER}" ./app.py
 popd
