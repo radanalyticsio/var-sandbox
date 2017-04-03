@@ -137,7 +137,7 @@ def responder_loop(socketio, output_queue):
 
 def main():
     spark_master = os.environ.get('SPARK_MASTER', 'local[*]')
-    wikieod_file = os.environ.get('WIKIEOD_FILE')
+    wikieod_file = os.environ.get('WIKIEOD_FILE', '/data/wikieod.parquet')
     debug_mode = os.environ.get('VAR_DEBUG', False)
 
     input_queue = mp.Queue()
