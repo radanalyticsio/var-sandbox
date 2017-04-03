@@ -61,13 +61,11 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
     from pyspark import sql as pysql
     from pyspark.sql import functions as pyfuncs
 
-    sconf = pyspark.SparkConf()
-    sconf.setAppName('var-sandbox').setMaster(spark_master)
-    sc = pyspark.SparkContext(conf=sconf)
+    spark = pysql.SparkSession.builder.master(spark_master).getOrCreate()
+    sc = spark.sparkContext
 
     output_queue.put('ready')
 
-    spark = pysql.SparkSession.builder.master(spark_master).getOrCreate()
     df = spark.read.load(wikieod_file)
     ddf = df.select('ticker', 'date', 'close').withColumn(
         'change', (pyfuncs.col('close') / pyfuncs.lag('close', 1).over(
