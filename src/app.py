@@ -167,7 +167,7 @@ def main():
     try:
         print('server running on 0.0.0.0:8080, press Ctrl-C to stop')
         print('spark master = {}'.format(spark_master))
-        print('wikieod file = {}'.format(wikieod))
+        print('wikieod file = {}'.format(wikieod_file))
         socketio.run(app, host='0.0.0.0', port=8080)
     except KeyboardInterrupt:
         output_queue.put('STOP')
