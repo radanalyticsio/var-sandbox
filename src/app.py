@@ -153,6 +153,14 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
 # ---------------------------------------------------------------------
 
 
+class BrandLogo(views.MethodView):
+    """This class returns the brand logo svg content."""
+
+    def get(self):
+        return flask.send_from_directory(
+            'static/img', 'brand-var.svg', mimetype='image/svg+xml')
+
+
 class HTMLContent(views.MethodView):
     """The view class for the root index page."""
 
@@ -239,6 +247,7 @@ def main():
     app = flask.Flask(__name__)
     app.config['SECRET_KEY'] = 'secret!'
     app.add_url_rule('/', view_func=HTMLContent.as_view('html'))
+    app.add_url_rule('/img/brand-var.svg', view_func=BrandLogo.as_view('logo'))
     app.add_url_rule('/predictions',
                      view_func=PredictionAPI.as_view('predictions',
                                                      input_queue))
