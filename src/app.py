@@ -1,3 +1,10 @@
+"""Value at Risk sandbox application.
+
+This application is a self-contained HTTP server and Apache Spark
+processing engine based on the algorithms present in the Value at Risk
+Jupyter notebook (https://github.com/radanalyticsio/workshop).
+"""
+
 import multiprocessing as mp
 import os
 import random
@@ -10,34 +17,33 @@ from flask import views
 import flask_socketio as io
 
 
-class HTMLContent(views.MethodView):
-    def get(self):
-        return flask.render_template('index.html')
-
-
-class PredictionAPI(views.MethodView):
-    def __init__(self, input_queue):
-        super(PredictionAPI, self).__init__()
-        self.input_queue = input_queue
-
-    def post(self):
-        data = flask.request.json
-        data.update({
-            'status': 'training',
-            'id': uuid.uuid4().hex})
-        self.input_queue.put(data)
-        return json.jsonify(data)
+# Functions inspired by code in the notebook
+# ---------------------------------------------------------------------
+# All the following functions have been written by taking their source
+# from the Value at Risk notebook which accompanies this application
+# in the workshop training materials. Please see the docstring comment
+# at the top of this file for the location of the notebook source.
 
 
 def portfolio_value(pf):
+    """Given a dictionary of stock values, return the total value."""
     return sum([v for v in pf.values()])
 
 
 def seeds(count):
+    """Return a list of random values of the specificed length."""
     return [random.randint(0, 1 << 32 - 1) for i in range(count)]
 
 
 def simstep(pf, params, prng):
+    """Simulate a single step of activity for a stock.
+
+    This function takes a dictionary of stock value data, a dictionary
+    containing stock prediction models, and a random.Random instance to
+    generate new variances from. It will return a dictionary with the
+    updated, randomly predicted, values for the stocks indexed by
+    symbol.
+    """
     def daily_return(sym):
         mean, stddev = params[sym]
         change = (prng.normalvariate(mean, stddev) + 100) / 100.0
@@ -46,6 +52,13 @@ def simstep(pf, params, prng):
 
 
 def simulate(seed, pf, params, days):
+    """Simulate a number of days worth of stock changes.
+
+    This function accepts a seed for the randomizer, a dictionary of
+    stock value data, a dictionary of stock prediction models, and a
+    number of days to simulate. It will return a dictionary with the
+    updated stock value predictions indexed by symbol.
+    """
     prng = random.Random()
     prng.seed(seed)
     pf = pf.copy()
@@ -55,6 +68,26 @@ def simulate(seed, pf, params, days):
 
 
 def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
+    """Create a model and process requests for new predictions.
+
+    This function is the heart of the application. It accepts a URL to
+    a Spark master, multiprocessing input and output Queue objects, and
+    the location of the end of day stock data in parquet format. With
+    this information it will load the end of day data and create a
+    model to base future predictions upon.
+
+    After creating the model, it will enter a blocking loop waiting for
+    new prediction requests to arrive. After receiving a new request,
+    it will simulate the requested stock predictions and place the
+    results into the output queue.
+
+    It is important to note that this function will run as a separate
+    process started by the main function. This is done to isolate the
+    Spark processing components from the thread of execution that is
+    running the Flask web server. In this manner the application will
+    be reactive to incoming input without blocking on the processing
+    activity.
+    """
     # import these here to allow the debug mode to function properly in the
     # absence of spark
     import pyspark
@@ -112,7 +145,48 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
         output_queue.put(req)
 
 
+# - End of notebook inspired functions --------------------------------
+
+
+# The following classes and functions are used to create the Flask
+# HTTP server, and run the application.
+# ---------------------------------------------------------------------
+
+
+class HTMLContent(views.MethodView):
+    """The view class for the root index page."""
+
+    def get(self):
+        return flask.render_template('index.html')
+
+
+class PredictionAPI(views.MethodView):
+    """The view class for the prediction rest API.
+
+    This class handles the POST requests to the sandbox for starting
+    new value at risk caluclations. When a new request is received, it
+    is placed in the multiprocess queue for the processing loop.
+    """
+
+    def __init__(self, input_queue):
+        super(PredictionAPI, self).__init__()
+        self.input_queue = input_queue
+
+    def post(self):
+        data = flask.request.json
+        data.update({
+            'status': 'training',
+            'id': uuid.uuid4().hex})
+        self.input_queue.put(data)
+        return json.jsonify(data)
+
+
 def debug_processing_loop(input_queue, output_queue):
+    """A simple printer to help with debugging.
+
+    This function is used with the debug option to disable Spark
+    processing and simply print the requests for predictions.
+    """
     import time
     output_queue.put('ready')
     while True:
@@ -124,6 +198,11 @@ def debug_processing_loop(input_queue, output_queue):
 
 
 def responder_loop(socketio, output_queue):
+    """Send websocket signals to the front end.
+
+    This function will process predictions that have finished and relay
+    them to the browser front end using socketio websockets.
+    """
     dont_stop = True
     while dont_stop:
         res = output_queue.get()
@@ -134,6 +213,12 @@ def responder_loop(socketio, output_queue):
 
 
 def main():
+    """Start the application and processes.
+
+    The main function will pull together the environment variables,
+    start the process for the prediction loop, start the thread for the
+    socketio responder, and setup the Flask HTTP server.
+    """
     spark_master = os.environ.get('SPARK_MASTER', 'local[*]')
     wikieod_file = os.environ.get('WIKIEOD_FILE', '/data/wikieod.parquet')
     debug_mode = os.environ.get('VAR_DEBUG', False)
@@ -169,6 +254,9 @@ def main():
         socketio.run(app, host='0.0.0.0', port=8080)
     except KeyboardInterrupt:
         output_queue.put('STOP')
+
+
+# ---------------------------------------------------------------------
 
 
 if __name__ == '__main__':
