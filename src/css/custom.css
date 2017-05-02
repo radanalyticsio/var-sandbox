@@ -8,10 +8,6 @@ div.prediction_row {
     padding-left: 1em;
 }
 
-div.prediction_row:hover {
-    background: #cccccc;
-}
-
 div#predictions {
     border-top: 1px #555555 solid;
 }
