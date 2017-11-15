@@ -45,8 +45,9 @@ def simstep(pf, params, prng):
     symbol.
     """
     def daily_return(sym):
-        mean, stddev = params[sym]
-        change = (prng.normalvariate(mean, stddev) + 100) / 100.0
+        from scipy.stats import t
+        df, loc, scale = params[sym]
+        change = (t.ppf(prng.uniform(0, 1), df=df, loc=loc, scale=scale) + 100) / 100.0
         return change
     return {s: daily_return(s) * v for s, v in pf.items()}
 
@@ -93,6 +94,7 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
     import pyspark
     from pyspark import sql as pysql
     from pyspark.sql import functions as pyfuncs
+    from scipy.stats import t
 
     spark = pysql.SparkSession.builder.master(spark_master).getOrCreate()
     sc = spark.sparkContext
@@ -104,11 +106,10 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
         'change', (pyfuncs.col('close') / pyfuncs.lag('close', 1).over(
         pysql.Window.partitionBy('ticker').orderBy(
         df['date'])) - 1.0) * 100)
-
-    mv = ddf.groupBy('ticker').agg(pyfuncs.avg('change').alias('mean'),
-        pyfuncs.sqrt(pyfuncs.variance('change')).alias('stddev'))
-
-    dist_map = mv.rdd.map(lambda r: (r[0], (r[1], r[2]))).collectAsMap()
+    
+    changes = ddf.groupBy("ticker").agg(pyfuncs.collect_list("change").alias("changes"))
+    
+    dist_map = changes.rdd.map(lambda r: (r[0], t.fit(r[1]))).collectAsMap()
 
     priceDF = ddf.orderBy('date', ascending=False).groupBy('ticker').agg(
         pyfuncs.first('close').alias('price'),
