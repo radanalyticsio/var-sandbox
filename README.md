@@ -9,6 +9,10 @@ the first pass. If you would prefer to dive into development or desire to run
 the application outside of OpenShift, please see the local deployment
 instructions.
 
+## Basic architecture
+
+![architecture](architecture.svg)
+
 ## Deployment on OpenShift
 
 The `openshift` directory contains a few templates for deploying the
