@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "Apache-2",
   "dependencies": {
-    "patternfly": "^3.18.1",
+    "patternfly": "^3.59.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "socket.io-client": "^1.7.2",
