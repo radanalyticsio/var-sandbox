@@ -116,6 +116,8 @@ def processing_loop(spark_master, input_queue, output_queue, wikieod_file):
         pyfuncs.first('date').alias('date'))
     prices = priceDF.rdd.map(lambda r: (r[0], r[1])).collectAsMap()
 
+    logging.info('Finished building model')
+
     while True:
         req = input_queue.get()
         portfolio = {}
