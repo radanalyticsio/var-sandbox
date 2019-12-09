@@ -200,7 +200,7 @@ def debug_processing_loop(input_queue, output_queue):
     output_queue.put('ready')
     while True:
         req = input_queue.get()
-        print('received -- {}'.format(req))
+        logging.info('received -- {}'.format(req))
         time.sleep(2)
         req.update({'status': 'ready'})
         output_queue.put(req)
