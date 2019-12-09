@@ -3,7 +3,7 @@ kind: SparkCluster
 metadata:
   name: var-cluster
 spec:
-  clusterImage: "docker.io/elmiko/openshift-spark:training"
+  customImage: "docker.io/elmiko/openshift-spark:training"
   worker:
     instances: "1"
   master:
