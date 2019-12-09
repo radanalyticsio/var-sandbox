@@ -5,6 +5,7 @@ processing engine based on the algorithms present in the Value at Risk
 Jupyter notebook (https://github.com/radanalyticsio/workshop).
 """
 
+import logging
 import multiprocessing as mp
 import os
 import random
@@ -257,9 +258,9 @@ def main():
         target=responder_loop, args=(socketio, output_queue))
     thread.start()
     try:
-        print('server running on 0.0.0.0:8080, press Ctrl-C to stop')
-        print('spark master = {}'.format(spark_master))
-        print('wikieod file = {}'.format(wikieod_file))
+        logging.info('server running on 0.0.0.0:8080, press Ctrl-C to stop')
+        logging.info('spark master = {}'.format(spark_master))
+        logging.info('wikieod file = {}'.format(wikieod_file))
         socketio.run(app, host='0.0.0.0', port=8080)
     except KeyboardInterrupt:
         output_queue.put('STOP')
@@ -269,4 +270,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    logging.info('starting var-sandbox')
     main()
