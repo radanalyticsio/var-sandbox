@@ -2,3 +2,4 @@ Flask==0.12
 Flask-SocketIO==2.8.2
 gevent==1.2.1
 gevent-websocket==0.9.5
+scipy==0.17.1
