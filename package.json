@@ -7,7 +7,7 @@
     "patternfly": "^3.18.1",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "socket.io-client": "^1.7.2",
+    "socket.io-client": "^4.0.0",
     "superagent": "^3.3.2",
     "victory": "^0.15.0"
   },
