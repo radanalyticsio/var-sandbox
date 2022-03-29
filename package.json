@@ -9,7 +9,7 @@
     "react-dom": "^15.4.2",
     "socket.io-client": "^1.7.2",
     "superagent": "^3.3.2",
-    "victory": "^0.15.0"
+    "victory": "^35.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
